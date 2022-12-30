@@ -1,0 +1,25 @@
+{
+  "domain": "victron_ble",
+  "name": "victron_ble",
+  "config_flow": true,
+  "integration_type": "device",
+  "version": "1.0.0",
+  "documentation": "https://www.home-assistant.io/integrations/victron_ble",
+  "requirements": [
+    "victron_ble==0.3.0"
+  ],
+  "ssdp": [],
+  "zeroconf": [],
+  "homekit": {},
+  "dependencies": [],
+  "codeowners": [
+    "@keshavdv"
+  ],
+  "iot_class": "local_push",
+  "bluetooth": [
+    {
+      "manufacturer_id": 737,
+      "manufacturer_data_start": [16]
+    }
+  ]
+}
