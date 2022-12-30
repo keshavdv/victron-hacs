@@ -2,24 +2,17 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Awaitable
 from typing import Any
 
 import voluptuous as vol
-
-
-from collections.abc import Awaitable
-import logging
-from typing import Any
-
 from homeassistant import config_entries
+from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 
-from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
-
 from .const import DOMAIN
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -107,12 +100,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_show_form(
                 step_id="user",
                 data_schema=vol.Schema(
-                {
-                    vol.Required("name", default=name): str,
-                    vol.Required("address", default=address): str,
-                    vol.Required("key"): str,
-                }
-            )
+                    {
+                        vol.Required("name", default=name): str,
+                        vol.Required("address", default=address): str,
+                        vol.Required("key"): str,
+                    }
+                ),
             )
 
         # return await super().async_step_confirm(user_input)

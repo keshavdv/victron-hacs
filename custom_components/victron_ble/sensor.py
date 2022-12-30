@@ -1,6 +1,7 @@
 """Support for Victron ble sensors."""
 from __future__ import annotations
 
+import logging
 from typing import Optional, Union
 
 from homeassistant import config_entries
@@ -17,17 +18,13 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import (
-    PERCENTAGE,
-    SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
-)
-from sensor_state_data.units import Units
+from homeassistant.const import PERCENTAGE, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
+from sensor_state_data.units import Units
 
 from .const import DOMAIN
-import logging
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,32 +62,36 @@ def sensor_update_to_bluetooth_data_update(
 ) -> PassiveBluetoothDataUpdate:
     """Convert a sensor update to a bluetooth data update."""
     _LOGGER.debug(f"IN here: {sensor_update}")
-
-    
     data = PassiveBluetoothDataUpdate(
         devices={
             device_id: sensor_device_info_to_hass_device_info(device_info)
             for device_id, device_info in sensor_update.devices.items()
         },
         entity_descriptions={
-            PassiveBluetoothEntityKey(device_key.key, device_key.device_id): SENSOR_DESCRIPTIONS[
+            PassiveBluetoothEntityKey(
+                device_key.key, device_key.device_id
+            ): SENSOR_DESCRIPTIONS[
                 (description.device_class, description.native_unit_of_measurement)
-            ] for device_key, description in sensor_update.entity_descriptions.items()
+            ]
+            for device_key, description in sensor_update.entity_descriptions.items()
             if description.device_class
         },
         entity_data={
-            PassiveBluetoothEntityKey(device_key.key, device_key.device_id): sensor_values.native_value
+            PassiveBluetoothEntityKey(
+                device_key.key, device_key.device_id
+            ): sensor_values.native_value
             for device_key, sensor_values in sensor_update.entity_values.items()
         },
         entity_names={
-            PassiveBluetoothEntityKey(device_key.key, device_key.device_id): sensor_values.name
+            PassiveBluetoothEntityKey(
+                device_key.key, device_key.device_id
+            ): sensor_values.name
             for device_key, sensor_values in sensor_update.entity_values.items()
         },
     )
     _LOGGER.debug(f"IN 2here: {data}")
 
     return data
-
 
 
 async def async_setup_entry(
@@ -109,8 +110,6 @@ async def async_setup_entry(
         )
     )
     entry.async_on_unload(coordinator.async_register_processor(processor))
-
-
 
 
 class VictronBluetoothSensorEntity(

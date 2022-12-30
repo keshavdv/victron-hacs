@@ -3,10 +3,10 @@
   "name": "victron_ble",
   "config_flow": true,
   "integration_type": "device",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "documentation": "https://www.home-assistant.io/integrations/victron_ble",
   "requirements": [
-    "victron_ble==0.3.0"
+    "victron_ble==0.3.2"
   ],
   "ssdp": [],
   "zeroconf": [],
