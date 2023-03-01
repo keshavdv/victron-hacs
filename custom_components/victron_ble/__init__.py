@@ -23,7 +23,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Victron BLE device from a config entry."""
     address = entry.unique_id
     assert address is not None
-    data = VictronBluetoothDeviceData()
+    data = VictronBluetoothDeviceData(entry.data["key"])
     coordinator = hass.data.setdefault(DOMAIN, {})[
         entry.entry_id
     ] = PassiveBluetoothProcessorCoordinator(

@@ -18,11 +18,10 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.const import PERCENTAGE, SIGNAL_STRENGTH_DECIBELS_MILLIWATT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
-from sensor_state_data.units import Units
+from sensor_state_data.units import SensorUpdate, Units
 
 from .const import DOMAIN
 
@@ -52,6 +51,18 @@ SENSOR_DESCRIPTIONS = {
         key=f"{SensorDeviceClass.BATTERY}_{Units.PERCENTAGE}",
         device_class=SensorDeviceClass.BATTERY,
         native_unit_of_measurement=Units.PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (SensorDeviceClass.ENERGY, Units.ENERGY_KILO_WATT_HOUR): SensorEntityDescription(
+        key=f"{SensorDeviceClass.ENERGY}_{Units.ENERGY_KILO_WATT_HOUR}",
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=Units.ENERGY_KILO_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    (SensorDeviceClass.POWER, Units.POWER_WATT): SensorEntityDescription(
+        key=f"{SensorDeviceClass.POWER}_{Units.POWER_WATT}",
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
 }
@@ -118,7 +129,7 @@ class VictronBluetoothSensorEntity(
     ],
     SensorEntity,
 ):
-    """Representation of a Victron ble sensor."""
+    """Representation of a Victron device that emits Instant Readout advertisements."""
 
     @property
     def native_value(self) -> int | float | None:
