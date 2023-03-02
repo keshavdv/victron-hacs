@@ -82,4 +82,5 @@ jobs:
             --durations=10 \
             -n auto \
             -p no:sugar \
-            tests
+            --fixtures tests/
+            tests/
