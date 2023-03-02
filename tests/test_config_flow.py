@@ -2,10 +2,10 @@
 from unittest.mock import patch
 
 from homeassistant import config_entries
-from custom_components.victron_ble.config_flow import CannotConnect, InvalidAuth
-from custom_components.victron_ble.const import DOMAIN
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+
+from custom_components.victron_ble.const import DOMAIN
 
 
 async def test_form(hass: HomeAssistant) -> None:
