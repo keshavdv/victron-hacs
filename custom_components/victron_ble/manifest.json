@@ -1,26 +1,23 @@
 {
   "domain": "victron_ble",
   "name": "Victron BLE",
-  "config_flow": true,
-  "integration_type": "device",
-  "version": "0.1.1",
-  "documentation": "https://github.com/keshavdv/victron-hacs/",
-  "requirements": [
-    "victron_ble==0.4.0"
-  ],
-  "issue_tracker": "https://github.com/keshavdv/victron-hacs/issues",
-  "ssdp": [],
-  "zeroconf": [],
-  "homekit": {},
-  "dependencies": ["bluetooth"],
-  "codeowners": [
-    "@keshavdv"
-  ],
-  "iot_class": "local_push",
   "bluetooth": [
     {
       "manufacturer_id": 737,
       "manufacturer_data_start": [16]
     }
-  ]
+  ],
+  "codeowners": [
+    "@keshavdv"
+  ],
+  "config_flow": true,
+  "dependencies": ["bluetooth"],
+  "documentation": "https://github.com/keshavdv/victron-hacs/",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/keshavdv/victron-hacs/issues",
+  "requirements": [
+    "victron_ble==0.4.0"
+  ],
+  "version": "0.1.1"
 }
