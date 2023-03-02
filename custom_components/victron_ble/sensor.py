@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from homeassistant import config_entries
 from homeassistant.components.bluetooth.passive_update_processor import (
@@ -21,14 +21,15 @@ from homeassistant.components.sensor import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
-from sensor_state_data.units import SensorUpdate, Units
+from sensor_state_data.data import SensorUpdate
+from sensor_state_data.units import Units
 
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
-SENSOR_DESCRIPTIONS = {
+SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
     (SensorDeviceClass.TEMPERATURE, Units.TEMP_CELSIUS): SensorEntityDescription(
         key=f"{SensorDeviceClass.TEMPERATURE}_{Units.TEMP_CELSIUS}",
         device_class=SensorDeviceClass.TEMPERATURE,

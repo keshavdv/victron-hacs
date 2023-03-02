@@ -1,13 +1,14 @@
 {
   "domain": "victron_ble",
-  "name": "victron_ble",
+  "name": "Victron BLE",
   "config_flow": true,
   "integration_type": "device",
-  "version": "0.1.0",
-  "documentation": "https://www.home-assistant.io/integrations/victron_ble",
+  "version": "0.1.1",
+  "documentation": "https://github.com/keshavdv/victron-hacs/",
   "requirements": [
-    "victron_ble==0.3.2"
+    "victron_ble==0.4.0"
   ],
+  "issue_tracker": "https://github.com/keshavdv/victron-hacs/issues",
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},

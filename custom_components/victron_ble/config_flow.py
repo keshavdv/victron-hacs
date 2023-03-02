@@ -22,7 +22,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 )
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
     """Handle a config flow for victron_ble."""
 
     VERSION = 1
@@ -64,7 +64,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 ),
             )
 
-        # return await super().async_step_confirm(user_input)
+        await self.async_set_unique_id(user_input["address"])
+        self._abort_if_unique_id_configured()
         return self.async_create_entry(title=user_input["name"], data=user_input)
 
     async def async_step_unignore(self, user_input):

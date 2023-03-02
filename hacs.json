@@ -1,3 +1,4 @@
 {
-  "name": "victron_ble"
+  "name": "Victron BLE",
+  "render_readme": true
 }
