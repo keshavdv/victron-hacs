@@ -1,4 +1,5 @@
 homeassistant
+bleak_retry_connector
 pytest
 coverage
 flake8
