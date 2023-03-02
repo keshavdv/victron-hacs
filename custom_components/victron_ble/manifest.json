@@ -12,7 +12,7 @@
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},
-  "dependencies": [],
+  "dependencies": ["bluetooth"],
   "codeowners": [
     "@keshavdv"
   ],
