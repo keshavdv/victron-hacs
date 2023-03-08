@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Dict, Optional, Tuple, Union
 
+from bluetooth_sensor_state_data import SIGNAL_STRENGTH_KEY
 from homeassistant import config_entries
 from homeassistant.components.bluetooth.passive_update_processor import (
     PassiveBluetoothDataProcessor,
@@ -23,8 +24,11 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
 from sensor_state_data.data import SensorUpdate
 from sensor_state_data.units import Units
+from victron_ble.devices.base import ChargerError, OffReason, OperationMode
+from victron_ble.devices.battery_monitor import AuxMode
 
 from .const import DOMAIN
+from .device import VictronSensor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,10 +58,10 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.PERCENTAGE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    (SensorDeviceClass.ENERGY, Units.ENERGY_KILO_WATT_HOUR): SensorEntityDescription(
-        key=f"{SensorDeviceClass.ENERGY}_{Units.ENERGY_KILO_WATT_HOUR}",
+    (VictronSensor.YIELD_TODAY, Units.ENERGY_WATT_HOUR): SensorEntityDescription(
+        key=VictronSensor.YIELD_TODAY,
         device_class=SensorDeviceClass.ENERGY,
-        native_unit_of_measurement=Units.ENERGY_KILO_WATT_HOUR,
+        native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
     (SensorDeviceClass.POWER, Units.POWER_WATT): SensorEntityDescription(
@@ -66,6 +70,66 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.POWER_WATT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    (VictronSensor.AUX_MODE, None): SensorEntityDescription(
+        key=VictronSensor.AUX_MODE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in AuxMode._member_names_],
+    ),
+    (VictronSensor.OPERATION_MODE, None): SensorEntityDescription(
+        key=VictronSensor.OPERATION_MODE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OperationMode._member_names_],
+    ),
+    (VictronSensor.OFF_REASON, None): SensorEntityDescription(
+        key=VictronSensor.OFF_REASON,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OffReason._member_names_],
+    ),
+    (VictronSensor.CHARGER_ERROR, None): SensorEntityDescription(
+        key=VictronSensor.CHARGER_ERROR,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in ChargerError._member_names_],
+    ),
+    (VictronSensor.EXTERNAL_DEVICE_LOAD, None): SensorEntityDescription(
+        key=f"{SensorDeviceClass.CURRENT}_{Units.ELECTRIC_CURRENT_AMPERE}",
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.INPUT_VOLTAGE,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
+        key=VictronSensor.INPUT_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.OUTPUT_VOLTAGE,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
+        key=VictronSensor.OUTPUT_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (SensorDeviceClass.BATTERY, Units.PERCENTAGE): SensorEntityDescription(
+        key=f"{SensorDeviceClass.BATTERY}_{Units.PERCENTAGE}",
+        device_class=SensorDeviceClass.BATTERY,
+        native_unit_of_measurement=Units.PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        SIGNAL_STRENGTH_KEY,
+        Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+    ): SensorEntityDescription(
+        key=f"{SensorDeviceClass.SIGNAL_STRENGTH}_{Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT}",
+        device_class=SensorDeviceClass.SIGNAL_STRENGTH,
+        native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+        state_class=SensorStateClass.MEASUREMENT,
+        entity_registry_enabled_default=False,
+    ),
 }
 
 
@@ -73,7 +137,6 @@ def sensor_update_to_bluetooth_data_update(
     sensor_update: SensorUpdate,
 ) -> PassiveBluetoothDataUpdate:
     """Convert a sensor update to a bluetooth data update."""
-    _LOGGER.debug(f"IN here: {sensor_update}")
     data = PassiveBluetoothDataUpdate(
         devices={
             device_id: sensor_device_info_to_hass_device_info(device_info)
@@ -83,10 +146,10 @@ def sensor_update_to_bluetooth_data_update(
             PassiveBluetoothEntityKey(
                 device_key.key, device_key.device_id
             ): SENSOR_DESCRIPTIONS[
-                (description.device_class, description.native_unit_of_measurement)
+                (description.device_key.key, description.native_unit_of_measurement)
             ]
             for device_key, description in sensor_update.entity_descriptions.items()
-            if description.device_class
+            if description.device_key
         },
         entity_data={
             PassiveBluetoothEntityKey(

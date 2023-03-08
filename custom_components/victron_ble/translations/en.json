@@ -16,6 +16,19 @@
           "key": "Advertisement Key"
         }
       }
+    },
+    "entity": {
+      "sensor": {
+        "operation_mode": {
+          "state": {
+            "cancelling": "Cancelling",
+            "idle": "Idle",
+            "paused": "Paused",
+            "pausing": "Pausing",
+            "printing": "Printing"
+          }
+        }
+      }
     }
   }
 }
