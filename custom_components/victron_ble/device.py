@@ -27,6 +27,7 @@ class VictronSensor(StrEnum):
     CHARGER_ERROR = "charger_error"
     STARTER_BATTERY_VOLTAGE = "starter_battery_voltage"
     MIDPOINT_VOLTAGE = "midpoint_voltage"
+    TIME_REMAINING = "time_remaining"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
@@ -89,6 +90,14 @@ class VictronBluetoothDeviceData(BluetoothData):
             )
             self.update_predefined_sensor(
                 SensorLibrary.BATTERY__PERCENTAGE, parsed.get_soc()
+            )
+
+            self.update_sensor(
+                key=VictronSensor.TIME_REMAINING,
+                name="Time remaining",
+                native_unit_of_measurement=Units.TIME_MINUTES,
+                native_value=parsed.get_remaining_mins(),
+                device_class=SensorDeviceClass.DURATION,
             )
 
             aux_mode = parsed.get_aux_mode()

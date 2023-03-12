@@ -91,9 +91,15 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         options=[x.lower() for x in ChargerError._member_names_],
     ),
     (VictronSensor.EXTERNAL_DEVICE_LOAD, None): SensorEntityDescription(
-        key=f"{SensorDeviceClass.CURRENT}_{Units.ELECTRIC_CURRENT_AMPERE}",
+        key=VictronSensor.EXTERNAL_DEVICE_LOAD,
         device_class=SensorDeviceClass.CURRENT,
         native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.TIME_REMAINING, Units.TIME_MINUTES): SensorEntityDescription(
+        key=VictronSensor.TIME_REMAINING,
+        device_class=SensorDeviceClass.DURATION,
+        native_unit_of_measurement=Units.TIME_MINUTES,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     (
