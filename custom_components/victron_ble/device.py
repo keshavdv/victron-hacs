@@ -53,7 +53,7 @@ class VictronBluetoothDeviceData(BluetoothData):
         self.set_precision(2)
 
         for mfr_id, mfr_data in manufacturer_data.items():
-            if mfr_id != 0x02E1:
+            if mfr_id != 0x02E1 or not mfr_data.startswith(b"\x10"):
                 continue
             self._process_mfr_data(address, local_name, mfr_id, mfr_data, service_uuids)
 
