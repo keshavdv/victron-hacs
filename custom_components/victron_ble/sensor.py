@@ -160,6 +160,18 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    (VictronSensor.BATTERY_CURRENT, Units.ELECTRIC_CURRENT_AMPERE): SensorEntityDescription(
+        key=VictronSensor.BATTERY_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.BATTERY_TEMPERATURE, Units.TEMP_CELSIUS): SensorEntityDescription(
+        key=VictronSensor.BATTERY_TEMPERATURE,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=Units.TEMP_CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     (VictronSensor.AC_VOLTAGE, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
         key=VictronSensor.AC_VOLTAGE,
         device_class=SensorDeviceClass.VOLTAGE,
@@ -176,6 +188,23 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         key=VictronSensor.AC_CURRENT,
         device_class=SensorDeviceClass.APPARENT_POWER,
         native_unit_of_measurement=Units.POWER_VOLT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_INPUT_STATE, None): SensorEntityDescription(
+        key=VictronSensor.AC_INPUT_STATE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in ACInState._member_names_],
+    ),
+    (VictronSensor.AC_INPUT_POWER, Units.POWER_WATT): SensorEntityDescription(
+        key=VictronSensor.AC_INPUT_POWER,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_OUTPUT_POWER, Units.POWER_WATT): SensorEntityDescription(
+        key=VictronSensor.AC_OUTPUT_POWER,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
 }

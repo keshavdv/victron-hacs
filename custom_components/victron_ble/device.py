@@ -13,6 +13,7 @@ from victron_ble.devices.dc_energy_meter import DcEnergyMeterData
 from victron_ble.devices.dcdc_converter import DcDcConverterData
 from victron_ble.devices.inverter import InverterData
 from victron_ble.devices.solar_charger import SolarChargerData
+from victron_ble.devices.vebus import VEBusData
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,9 +31,14 @@ class VictronSensor(StrEnum):
     MIDPOINT_VOLTAGE = "midpoint_voltage"
     TIME_REMAINING = "time_remaining"
     BATTERY_VOLTAGE = "battery_voltage"
+    BATTERY_CURRENT = "battery_current"
+    BATTERY_TEMPERATURE = "battery_temperature"
     AC_VOLTAGE = "ac_voltage"
     AC_CURRENT = "ac_current"
     AC_APPARENT_POWER = "ac_apparent_power"
+    AC_INPUT_STATE = "ac_input_state"
+    AC_INPUT_POWER = "ac_input_power"
+    AC_OUTPUT_POWER = "ac_output_power"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
@@ -235,5 +241,51 @@ class VictronBluetoothDeviceData(BluetoothData):
                 device_class=SensorDeviceClass.APPARENT_POWER,
             )
 
+        elif isinstance(parsed, VEBusData):
+            self.update_sensor(
+                key=VictronSensor.OPERATION_MODE,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_device_state().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.BATTERY_VOLTAGE,
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_battery_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
+            )
+            self.update_sensor(
+                key=VictronSensor.BATTERY_CURRENT,
+                native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+                native_value=parsed.get_battery_current(),
+                device_class=SensorDeviceClass.CURRENT,
+            )
+            self.update_sensor(
+                key=VictronSensor.BATTERY_TEMPERATURE,
+                native_unit_of_measurement=Units.TEMP_CELSIUS,
+                native_value=parsed.get_battery_temperature(),
+                device_class=SensorDeviceClass.TEMPERATURE,
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.BATTERY__PERCENTAGE, parsed.get_soc()
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_INPUT_STATE,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_ac_in_state().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_INPUT_POWER,
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=parsed.get_ac_in_power(),
+                device_class=SensorDeviceClass.POWER,
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_OUTPUT_POWER,
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=parsed.get_ac_out_power(),
+                device_class=SensorDeviceClass.POWER,
+            )
 
         return
