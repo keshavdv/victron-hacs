@@ -11,6 +11,7 @@ from victron_ble.devices.battery_monitor import AuxMode, BatteryMonitorData
 from victron_ble.devices.battery_sense import BatterySenseData
 from victron_ble.devices.dc_energy_meter import DcEnergyMeterData
 from victron_ble.devices.dcdc_converter import DcDcConverterData
+from victron_ble.devices.inverter import InverterData
 from victron_ble.devices.solar_charger import SolarChargerData
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,6 +29,10 @@ class VictronSensor(StrEnum):
     STARTER_BATTERY_VOLTAGE = "starter_battery_voltage"
     MIDPOINT_VOLTAGE = "midpoint_voltage"
     TIME_REMAINING = "time_remaining"
+    BATTERY_VOLTAGE = "battery_voltage"
+    AC_VOLTAGE = "ac_voltage"
+    AC_CURRENT = "ac_current"
+    AC_APPARENT_POWER = "ac_apparent_power"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
@@ -197,5 +202,38 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_value=parsed.get_charger_error().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
+
+        elif isinstance(parsed, InverterData):
+            self.update_sensor(
+                key=VictronSensor.OPERATION_MODE,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_device_state().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.BATTERY_VOLTAGE,
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_battery_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_VOLTAGE,
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_ac_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_CURRENT,
+                native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+                native_value=parsed.get_ac_current(),
+                device_class=SensorDeviceClass.CURRENT,
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_APPARENT_POWER,
+                native_unit_of_measurement=Units.POWER_VOLT_AMPERE,
+                native_value=parsed.get_ac_apparent_power(),
+                device_class=SensorDeviceClass.APPARENT_POWER,
+            )
+
 
         return

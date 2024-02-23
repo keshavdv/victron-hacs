@@ -24,7 +24,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
 from sensor_state_data.data import SensorUpdate
 from sensor_state_data.units import Units
-from victron_ble.devices.base import ChargerError, OffReason, OperationMode
+from victron_ble.devices.base import ACInState, ChargerError, OffReason, OperationMode
 from victron_ble.devices.battery_monitor import AuxMode
 
 from .const import DOMAIN
@@ -152,6 +152,30 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         key=VictronSensor.MIDPOINT_VOLTAGE,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.BATTERY_VOLTAGE, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+        key=VictronSensor.BATTERY_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_VOLTAGE, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+        key=VictronSensor.AC_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_CURRENT, Units.ELECTRIC_CURRENT_AMPERE): SensorEntityDescription(
+        key=VictronSensor.AC_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_APPARENT_POWER, Units.POWER_VOLT_AMPERE): SensorEntityDescription(
+        key=VictronSensor.AC_CURRENT,
+        device_class=SensorDeviceClass.APPARENT_POWER,
+        native_unit_of_measurement=Units.POWER_VOLT_AMPERE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
 }

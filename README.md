@@ -24,6 +24,12 @@ Supported Devices & Entities:
   - Solar Power (W)
   - Yield Today (Wh)
   - External Device Load (A)
+- Inverter
+  - Device State (Off, Inverting)
+  - Battery Voltage (V)
+  - AC Voltage (V)
+  - AC Current (A)
+  - AC Apparent Power (VA)
 
 # Installation
 
