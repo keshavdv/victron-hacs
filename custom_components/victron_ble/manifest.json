@@ -15,5 +15,5 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/keshavdv/victron-hacs/issues",
   "requirements": ["git+https://github.com/j9brown/victron-ble.git@main#victron_ble==0.7.2"],
-  "version": "0.1.4"
+  "version": "0.1.5"
 }

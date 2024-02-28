@@ -17,6 +17,8 @@ from victron_ble.devices.vebus import VEBusData
 
 _LOGGER = logging.getLogger(__name__)
 
+def enum_to_native_value(e):
+    return e.name.lower() if e is not None else None
 
 class VictronSensor(StrEnum):
     AUX_MODE = "aux_mode"
@@ -116,7 +118,7 @@ class VictronBluetoothDeviceData(BluetoothData):
                 key=VictronSensor.AUX_MODE,
                 name="Auxilliary Input Mode",
                 native_unit_of_measurement=None,
-                native_value=aux_mode.name.lower(),
+                native_value=enum_to_native_value(aux_mode),
                 device_class=SensorDeviceClass.ENUM,
             )
             if aux_mode == AuxMode.MIDPOINT_VOLTAGE:
@@ -166,7 +168,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OPERATION_MODE,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_charge_state().name.lower(),
+                native_value=enum_to_native_value(parsed.get_charge_state()),
                 device_class=SensorDeviceClass.ENUM,
             )
             if parsed.get_external_device_load():
@@ -181,7 +183,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OPERATION_MODE,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_charge_state().name.lower(),
+                native_value=enum_to_native_value(parsed.get_charge_state()),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
@@ -199,13 +201,13 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OFF_REASON,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_off_reason().name.lower(),
+                native_value=enum_to_native_value(parsed.get_off_reason()),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
                 key=VictronSensor.CHARGER_ERROR,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_charger_error().name.lower(),
+                native_value=enum_to_native_value(parsed.get_charger_error()),
                 device_class=SensorDeviceClass.ENUM,
             )
 
@@ -213,7 +215,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OPERATION_MODE,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_device_state().name.lower(),
+                native_value=enum_to_native_value(parsed.get_device_state()),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
@@ -245,7 +247,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OPERATION_MODE,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_device_state().name.lower(),
+                native_value=enum_to_native_value(parsed.get_device_state()),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
@@ -272,7 +274,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.AC_INPUT_STATE,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_ac_in_state().name.lower(),
+                native_value=enum_to_native_value(parsed.get_ac_in_state()),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
