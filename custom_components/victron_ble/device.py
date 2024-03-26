@@ -41,6 +41,9 @@ class VictronSensor(StrEnum):
     AC_INPUT_STATE = "ac_input_state"
     AC_INPUT_POWER = "ac_input_power"
     AC_OUTPUT_POWER = "ac_output_power"
+    ALARM_REASON = "alarm_reason"
+    ALARM_NOTIFICATION = "alarm_notification"
+    CONSUMED = "consumed"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
@@ -111,6 +114,21 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_unit_of_measurement=Units.TIME_MINUTES,
                 native_value=parsed.get_remaining_mins(),
                 device_class=SensorDeviceClass.DURATION,
+            )
+
+            self.update_sensor(
+                key=VictronSensor.CONSUMED,
+                name="Consumed",
+                native_unit_of_measurement="Ah",
+                native_value=parsed.get_consumed_ah(),
+            )
+
+            self.update_sensor(
+                key=VictronSensor.ALARM_REASON,
+                name="Alarm",
+                native_unit_of_measurement=None,
+                native_value=enum_to_native_value(parsed.get_alarm()),
+                device_class=SensorDeviceClass.ENUM,
             )
 
             aux_mode = parsed.get_aux_mode()
@@ -288,6 +306,13 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_unit_of_measurement=Units.POWER_WATT,
                 native_value=parsed.get_ac_out_power(),
                 device_class=SensorDeviceClass.POWER,
+            )
+            self.update_sensor(
+                key=VictronSensor.ALARM_NOTIFICATION,
+                name="Alarm",
+                native_unit_of_measurement=None,
+                native_value=enum_to_native_value(parsed.get_alarm()),
+                device_class=SensorDeviceClass.ENUM,
             )
 
         return
