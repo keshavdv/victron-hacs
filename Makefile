@@ -99,6 +99,6 @@ init:             ## Initialize the project based on an application template.
 
 
 # This project has been generated from rochacbruno/python-project-template
-# __author__ = 'rochacbruno'
-# __repo__ = https://github.com/rochacbruno/python-project-template
-# __sponsor__ = https://github.com/sponsors/rochacbruno/
+# __author__ = 'herrfeuer'
+# __repo__ = https://github.com/herrfeuer/python-project-template
+# __sponsor__ = https://github.com/sponsors/herrfeuer/

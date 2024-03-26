@@ -24,6 +24,21 @@ Supported Devices & Entities:
   - Solar Power (W)
   - Yield Today (Wh)
   - External Device Load (A)
+- Inverter
+  - Device State (Off, Inverting)
+  - Battery Voltage (V)
+  - AC Voltage (V)
+  - AC Current (A)
+  - AC Apparent Power (VA)
+- VE.Bus Adapter (works with Multiplus Inverters)
+  - Device State (Off, Inverting)
+  - Battery Voltage (V)
+  - Battery Current (A)
+  - Battery Temperature (°C)
+  - Battery State of Charge (%)
+  - AC Input State (AC_IN_1, AC_IN_2, NOT_CONNECTED)
+  - AC Input Power (W)
+  - AC Output Power (W)
 
 # Installation
 
