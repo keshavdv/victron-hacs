@@ -195,7 +195,7 @@ async def async_setup_entry(
 
 class VictronBluetoothSensorEntity(
     PassiveBluetoothProcessorEntity[
-        PassiveBluetoothDataProcessor[Optional[Union[float, int]]]
+        PassiveBluetoothDataProcessor[Optional[Union[float, int]], 1]
     ],
     SensorEntity,
 ):
