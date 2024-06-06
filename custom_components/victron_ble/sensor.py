@@ -136,6 +136,24 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
     ),
+    (
+        VictronSensor.STARTER_BATTERY_VOLTAGE,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
+        key=VictronSensor.STARTER_BATTERY_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.MIDPOINT_VOLTAGE,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
+        key=VictronSensor.MIDPOINT_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
 }
 
 
@@ -195,7 +213,7 @@ async def async_setup_entry(
 
 class VictronBluetoothSensorEntity(
     PassiveBluetoothProcessorEntity[
-        PassiveBluetoothDataProcessor[Optional[Union[float, int]]]
+        PassiveBluetoothDataProcessor[Optional[Union[float, int]], 1]
     ],
     SensorEntity,
 ):
