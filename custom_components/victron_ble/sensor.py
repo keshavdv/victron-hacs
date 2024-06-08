@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, Callable
 
 from bluetooth_sensor_state_data import SIGNAL_STRENGTH_KEY
 from homeassistant import config_entries
@@ -184,7 +184,15 @@ async def async_setup_entry(
     coordinator: PassiveBluetoothProcessorCoordinator = hass.data[DOMAIN][
         entry.entry_id
     ]
-    processor = PassiveBluetoothDataProcessor(sensor_update_to_bluetooth_data_update)
+    
+    def update_method(sensor_update: SensorUpdate) -> PassiveBluetoothDataUpdate:
+        return sensor_update_to_bluetooth_data_update(sensor_update)
+    
+    processor = PassiveBluetoothDataProcessor(
+        update_method=update_method,
+        restore_key=entry.entry_id
+    )
+
     entry.async_on_unload(
         processor.async_add_entities_listener(
             VictronBluetoothSensorEntity, async_add_entities
@@ -195,7 +203,7 @@ async def async_setup_entry(
 
 class VictronBluetoothSensorEntity(
     PassiveBluetoothProcessorEntity[
-        PassiveBluetoothDataProcessor[Optional[Union[float, int]]]
+        PassiveBluetoothDataProcessor[Optional[Union[float, int]], SensorUpdate]
     ],
     SensorEntity,
 ):
