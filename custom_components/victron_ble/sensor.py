@@ -82,8 +82,6 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
     ),
     (VictronSensor.OFF_REASON, None): SensorEntityDescription(
         key=VictronSensor.OFF_REASON,
-        device_class=SensorDeviceClass.ENUM,
-        options=[x.lower() for x in OffReason._member_names_],
     ),
     (VictronSensor.CHARGER_ERROR, None): SensorEntityDescription(
         key=VictronSensor.CHARGER_ERROR,
@@ -92,8 +90,6 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
     ),
     (VictronSensor.ALARM_REASON, None): SensorEntityDescription(
         key=VictronSensor.ALARM_REASON,
-        device_class=SensorDeviceClass.ENUM,
-        options=[x.lower() for x in AlarmReason._member_names_],
     ),
     (VictronSensor.ALARM_NOTIFICATION, None): SensorEntityDescription(
         key=VictronSensor.ALARM_NOTIFICATION,
