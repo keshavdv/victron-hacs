@@ -24,6 +24,35 @@ Supported Devices & Entities:
   - Solar Power (W)
   - Yield Today (Wh)
   - External Device Load (A)
+- Inverter
+  - Device State (Off, Inverting)
+  - Battery Voltage (V)
+  - AC Voltage (V)
+  - AC Current (A)
+  - AC Apparent Power (VA)
+- VE.Bus Adapter (works with Multiplus Inverters)
+  - Device State (Off, Inverting)
+  - Battery Voltage (V)
+  - Battery Current (A)
+  - Battery Temperature (°C)
+  - Battery State of Charge (%)
+  - AC Input State (AC_IN_1, AC_IN_2, NOT_CONNECTED)
+  - AC Input Power (W)
+  - AC Output Power (W)
+- Orion Tr DC/DC Converter
+  - Operation Mode
+  - Input Voltage (V)
+  - Output Voltage (V)
+  - Off Reason
+  - Charger Error
+- Orion XS DC/DC Converter
+  - Operation Mode
+  - Input Voltage (V)
+  - Input Current (A)
+  - Output Voltage (V)
+  - Output Current (A)
+  - Off Reason
+  - Charger Error
 
 # Installation
 
@@ -36,6 +65,6 @@ Supported Devices & Entities:
 ## HACS
 
 1. Add the integration through this link:
-   [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=keshavdv&repository=victron-hacs&category=integration)
+   [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=j9brown&repository=victron-hacs&category=integration)
 2. Restart Home Assistant
 3. Setup integration via the integration page.

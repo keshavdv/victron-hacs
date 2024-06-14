@@ -7,13 +7,13 @@
       "manufacturer_data_start": [16]
     }
   ],
-  "codeowners": ["@keshavdv"],
+  "codeowners": ["@j9brown"],
   "config_flow": true,
   "dependencies": ["bluetooth"],
   "documentation": "https://github.com/keshavdv/victron-hacs/",
   "integration_type": "device",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/keshavdv/victron-hacs/issues",
-  "requirements": ["victron_ble==0.5.1"],
-  "version": "0.1.1"
+  "requirements": ["git+https://github.com/j9brown/victron-ble.git@main#victron_ble==0.8.4"],
+  "version": "0.1.13"
 }
