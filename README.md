@@ -39,6 +39,20 @@ Supported Devices & Entities:
   - AC Input State (AC_IN_1, AC_IN_2, NOT_CONNECTED)
   - AC Input Power (W)
   - AC Output Power (W)
+- Orion Tr DC/DC Converter
+  - Operation Mode
+  - Input Voltage (V)
+  - Output Voltage (V)
+  - Off Reason
+  - Charger Error
+- Orion XS DC/DC Converter
+  - Operation Mode
+  - Input Voltage (V)
+  - Input Current (A)
+  - Output Voltage (V)
+  - Output Current (A)
+  - Off Reason
+  - Charger Error
 
 # Installation
 
