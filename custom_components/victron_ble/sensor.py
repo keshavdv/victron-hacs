@@ -184,7 +184,14 @@ async def async_setup_entry(
     coordinator: PassiveBluetoothProcessorCoordinator = hass.data[DOMAIN][
         entry.entry_id
     ]
-    processor = PassiveBluetoothDataProcessor(sensor_update_to_bluetooth_data_update)
+
+    def update_method(sensor_update: SensorUpdate) -> PassiveBluetoothDataUpdate:
+        return sensor_update_to_bluetooth_data_update(sensor_update)
+
+    processor = PassiveBluetoothDataProcessor(
+        update_method=update_method, restore_key=entry.entry_id
+    )
+
     entry.async_on_unload(
         processor.async_add_entities_listener(
             VictronBluetoothSensorEntity, async_add_entities
@@ -195,7 +202,7 @@ async def async_setup_entry(
 
 class VictronBluetoothSensorEntity(
     PassiveBluetoothProcessorEntity[
-        PassiveBluetoothDataProcessor[Optional[Union[float, int]]]
+        PassiveBluetoothDataProcessor[Optional[Union[float, int]], SensorUpdate]
     ],
     SensorEntity,
 ):
