@@ -138,7 +138,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OFF_REASON,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_off_reason(),
+                native_value=parsed.get_off_reason().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
         elif isinstance(parsed, BatteryMonitorData):
