@@ -83,13 +83,19 @@ class VictronBluetoothDeviceData(BluetoothData):
                 SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE, parsed.get_current()
             )
         elif isinstance(parsed, SmartBatteryProtectData):
-            self.update_predefined_sensor(
-                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
-                parsed.get_input_voltage(),
+            self.update_sensor(
+                key=VictronSensor.INPUT_VOLTAGE,
+                name="Input Voltage",
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_input_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
             )
-            self.update_predefined_sensor(
-                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
-                parsed.get_output_voltage(),
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_VOLTAGE,
+                name="Output Voltage",
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_output_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
             )
         elif isinstance(parsed, BatteryMonitorData):
             self.update_predefined_sensor(
