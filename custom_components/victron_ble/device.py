@@ -29,6 +29,8 @@ class VictronSensor(StrEnum):
     STARTER_BATTERY_VOLTAGE = "starter_battery_voltage"
     MIDPOINT_VOLTAGE = "midpoint_voltage"
     TIME_REMAINING = "time_remaining"
+    ALARM_REASON = "alarm_raeason"
+    CONSUMED_ENERGY = "consumed_energy"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
@@ -109,6 +111,20 @@ class VictronBluetoothDeviceData(BluetoothData):
             )
 
             self.update_sensor(
+                key=VictronSensor.ALARM_REASON,
+                name="Alarm Reason",
+                native_unit_of_measurement=None,
+                native_value=parsed.get_alarm(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.CONSUMED_ENERGY,
+                name="Consumed Energy",
+                native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
+                native_value=parsed.get_consumed_ah() * parsed.get_voltage() * -1,
+                device_class=SensorDeviceClass.ENERGY,
+            )
+            self.update_sensor(
                 key=VictronSensor.TIME_REMAINING,
                 name="Time remaining",
                 native_unit_of_measurement=Units.TIME_MINUTES,
@@ -171,6 +187,12 @@ class VictronBluetoothDeviceData(BluetoothData):
                 key=VictronSensor.OPERATION_MODE,
                 native_unit_of_measurement=None,
                 native_value=parsed.get_charge_state().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.CHARGER_ERROR,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_charger_error().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
             if parsed.get_external_device_load():
