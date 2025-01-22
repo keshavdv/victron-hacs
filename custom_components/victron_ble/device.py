@@ -29,7 +29,7 @@ class VictronSensor(StrEnum):
     STARTER_BATTERY_VOLTAGE = "starter_battery_voltage"
     MIDPOINT_VOLTAGE = "midpoint_voltage"
     TIME_REMAINING = "time_remaining"
-    ALARM_REASON = "alarm_raeason"
+    ALARM_REASON = "alarm_reason"
     CONSUMED_ENERGY = "consumed_energy"
 
 

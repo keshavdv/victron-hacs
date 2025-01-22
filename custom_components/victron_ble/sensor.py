@@ -160,10 +160,11 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in AlarmReason._member_names_],
     ),
-    (VictronSensor.CONSUMED_ENERGY, None): SensorEntityDescription(
+    (VictronSensor.CONSUMED_ENERGY, Units.ENERGY_WATT_HOUR): SensorEntityDescription(
         key=VictronSensor.CONSUMED_ENERGY,
         device_class=SensorDeviceClass.ENERGY,
-        state_class=SensorStateClass.TOTAL,
+        native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
     ),
 }
 
