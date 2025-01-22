@@ -27,6 +27,7 @@ from sensor_state_data.data import SensorUpdate
 from sensor_state_data.units import Units
 from victron_ble.devices.base import AlarmReason, ChargerError, OffReason, OperationMode
 from victron_ble.devices.battery_monitor import AuxMode
+from victron_ble.devices.smart_battery_protect import OutputState
 
 from .const import DOMAIN
 from .device import VictronSensor
@@ -169,10 +170,12 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
     (VictronSensor.DEVICE_STATE, None): SensorEntityDescription(
         key=VictronSensor.DEVICE_STATE,
         device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OperationMode._member_names_],
     ),
     (VictronSensor.OUTPUT_STATE, None): SensorEntityDescription(
         key=VictronSensor.OUTPUT_STATE,
         device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OutputState._member_names_],
     ),
 }
 
