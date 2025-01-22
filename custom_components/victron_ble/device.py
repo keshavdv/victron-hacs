@@ -102,10 +102,23 @@ class VictronBluetoothDeviceData(BluetoothData):
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
+                key=VictronSensor.CHARGER_ERROR,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_charger_error().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
                 key=VictronSensor.ALARM_REASON,
                 name="Alarm Reason",
                 native_unit_of_measurement=None,
                 native_value=parsed.get_alarm_reason().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.ALARM_REASON,
+                name="Warning Reason",
+                native_unit_of_measurement=None,
+                native_value=parsed.get_warning_reason().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
