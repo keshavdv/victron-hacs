@@ -104,7 +104,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.CHARGER_ERROR,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_charger_error().name.lower(),
+                native_value=parsed.get_error_code().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
