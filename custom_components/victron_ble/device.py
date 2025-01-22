@@ -11,6 +11,7 @@ from victron_ble.devices.battery_monitor import AuxMode, BatteryMonitorData
 from victron_ble.devices.battery_sense import BatterySenseData
 from victron_ble.devices.dc_energy_meter import DcEnergyMeterData
 from victron_ble.devices.dcdc_converter import DcDcConverterData
+from victron_ble.devices.smart_battery_protect import SmartBatteryProtectData
 from victron_ble.devices.solar_charger import SolarChargerData
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,6 +82,15 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(
                 SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE, parsed.get_current()
             )
+        elif isinstance(parsed, SmartBatteryProtectData):
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                parsed.get_input_voltage(),
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                parsed.get_output_voltage(),
+            )
         elif isinstance(parsed, BatteryMonitorData):
             self.update_predefined_sensor(
                 SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT, parsed.get_voltage()
@@ -126,7 +136,6 @@ class VictronBluetoothDeviceData(BluetoothData):
                 self.update_predefined_sensor(
                     SensorLibrary.TEMPERATURE__CELSIUS, parsed.get_temperature()
                 )
-
         elif isinstance(parsed, BatterySenseData):
             self.update_predefined_sensor(
                 SensorLibrary.TEMPERATURE__CELSIUS, parsed.get_temperature()
@@ -165,7 +174,6 @@ class VictronBluetoothDeviceData(BluetoothData):
                     native_value=parsed.get_external_device_load(),
                     device_class=SensorDeviceClass.CURRENT,
                 )
-
         elif isinstance(parsed, DcDcConverterData):
             self.update_sensor(
                 key=VictronSensor.OPERATION_MODE,
