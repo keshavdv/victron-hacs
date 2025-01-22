@@ -110,13 +110,13 @@ class VictronBluetoothDeviceData(BluetoothData):
                 SensorLibrary.BATTERY__PERCENTAGE, parsed.get_soc()
             )
 
-            self.update_sensor(
-                key=VictronSensor.ALARM_REASON,
-                name="Alarm Reason",
-                native_unit_of_measurement=None,
-                native_value=parsed.get_alarm(),
-                device_class=SensorDeviceClass.ENUM,
-            )
+#            self.update_sensor(
+#                key=VictronSensor.ALARM_REASON,
+#                name="Alarm Reason",
+#                native_unit_of_measurement=None,
+#                native_value=parsed.get_alarm(),
+#                device_class=SensorDeviceClass.ENUM,
+#            )
 #            self.update_sensor(
 #                key=VictronSensor.CONSUMED_ENERGY,
 #                name="Consumed Energy",
