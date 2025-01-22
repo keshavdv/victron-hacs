@@ -117,13 +117,13 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_value=parsed.get_alarm(),
                 device_class=SensorDeviceClass.ENUM,
             )
-            self.update_sensor(
-                key=VictronSensor.CONSUMED_ENERGY,
-                name="Consumed Energy",
-                native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
-                native_value=parsed.get_consumed_ah() * parsed.get_voltage() * -1,
-                device_class=SensorDeviceClass.ENERGY,
-            )
+#            self.update_sensor(
+#                key=VictronSensor.CONSUMED_ENERGY,
+#                name="Consumed Energy",
+#                native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
+#                native_value=parsed.get_consumed_ah() * parsed.get_voltage() * -1,
+#                device_class=SensorDeviceClass.ENERGY,
+#            )
             self.update_sensor(
                 key=VictronSensor.TIME_REMAINING,
                 name="Time remaining",
