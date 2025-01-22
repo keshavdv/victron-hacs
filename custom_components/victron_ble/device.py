@@ -31,6 +31,8 @@ class VictronSensor(StrEnum):
     TIME_REMAINING = "time_remaining"
     ALARM_REASON = "alarm_reason"
     CONSUMED_ENERGY = "consumed_energy"
+    DEVICE_STATE = "device_state"
+    OUTPUT_STATE = "output_state"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
@@ -86,6 +88,27 @@ class VictronBluetoothDeviceData(BluetoothData):
             )
         elif isinstance(parsed, SmartBatteryProtectData):
             self.update_sensor(
+                key=VictronSensor.DEVICE_STATE,
+                name="Device State",
+                native_unit_of_measurement=None,
+                native_value=parsed.get_device_state(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_STATE,
+                name="Output State",
+                native_unit_of_measurement=None,
+                native_value=parsed.get_output_state(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.ALARM_REASON,
+                name="Alarm Reason",
+                native_unit_of_measurement=None,
+                native_value=parsed.get_alarm_reason(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
                 key=VictronSensor.INPUT_VOLTAGE,
                 name="Input Voltage",
                 native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
@@ -98,6 +121,12 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
                 native_value=parsed.get_output_voltage(),
                 device_class=SensorDeviceClass.VOLTAGE,
+            )
+            self.update_sensor(
+                key=VictronSensor.OFF_REASON,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_off_reason().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
             )
         elif isinstance(parsed, BatteryMonitorData):
             self.update_predefined_sensor(
