@@ -277,7 +277,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             # Additional Sensor
             self.update_sensor(
                 key=VictronSensor.OUTPUT_POWER,
-                name="Output Power",
+                name="Power",
                 native_unit_of_measurement=Units.POWER_WATT,
                 native_value=parsed.get_voltage() * parsed.get_current(),
                 device_class=SensorDeviceClass.POWER,
