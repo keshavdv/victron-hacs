@@ -1,4 +1,5 @@
 """Support for Victron ble sensors."""
+
 from __future__ import annotations
 
 import logging
@@ -24,8 +25,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
 from sensor_state_data.data import SensorUpdate
 from sensor_state_data.units import Units
-from victron_ble.devices.base import ChargerError, OffReason, OperationMode
+from victron_ble.devices.base import AlarmReason, ChargerError, OffReason, OperationMode
 from victron_ble.devices.battery_monitor import AuxMode
+from victron_ble.devices.smart_battery_protect import OutputState
 
 from .const import DOMAIN
 from .device import VictronSensor
@@ -153,6 +155,27 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.CONSUMED_ENERGY, Units.ENERGY_WATT_HOUR): SensorEntityDescription(
+        key=VictronSensor.CONSUMED_ENERGY,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    (VictronSensor.ALARM_REASON, None): SensorEntityDescription(
+        key=VictronSensor.ALARM_REASON,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in AlarmReason._member_names_],
+    ),
+    (VictronSensor.DEVICE_STATE, None): SensorEntityDescription(
+        key=VictronSensor.DEVICE_STATE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OperationMode._member_names_],
+    ),
+    (VictronSensor.OUTPUT_STATE, None): SensorEntityDescription(
+        key=VictronSensor.OUTPUT_STATE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OutputState._member_names_],
     ),
 }
 
