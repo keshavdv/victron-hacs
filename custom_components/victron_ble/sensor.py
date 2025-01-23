@@ -185,6 +185,11 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in AlarmReason._member_names_],
     ),
+    (VictronSensor.WARNING_REASON, None): SensorEntityDescription(
+        key=VictronSensor.WARNING_REASON,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in AlarmReason._member_names_],
+    ),
     (VictronSensor.DEVICE_STATE, None): SensorEntityDescription(
         key=VictronSensor.DEVICE_STATE,
         device_class=SensorDeviceClass.ENUM,

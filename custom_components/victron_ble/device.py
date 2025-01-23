@@ -34,6 +34,7 @@ class VictronSensor(StrEnum):
     TIME_REMAINING = "time_remaining"
     CONSUMED_ENERGY = "consumed_energy"
     ALARM_REASON = "alarm_reason"
+    WARNING_REASON = "warning_reason"
     DEVICE_STATE = "device_state"
     OUTPUT_STATE = "output_state"
 
@@ -195,7 +196,7 @@ class VictronBluetoothDeviceData(BluetoothData):
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
-                key=VictronSensor.ALARM_REASON,
+                key=VictronSensor.WARNING_REASON,
                 name="Warning Reason",
                 native_unit_of_measurement=None,
                 native_value=parsed.get_warning_reason().name.lower(),
