@@ -233,13 +233,6 @@ class VictronBluetoothDeviceData(BluetoothData):
             )
 
             self.update_sensor(
-                key=VictronSensor.CONSUMED_ENERGY,
-                name="Consumed Energy",
-                native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
-                native_value=parsed.get_consumed_ah() * parsed.get_voltage() * -1,
-                device_class=SensorDeviceClass.ENERGY,
-            )
-            self.update_sensor(
                 key=VictronSensor.ALARM_REASON,
                 name="Alarm Reason",
                 native_unit_of_measurement=None,
@@ -280,6 +273,22 @@ class VictronBluetoothDeviceData(BluetoothData):
                 self.update_predefined_sensor(
                     SensorLibrary.TEMPERATURE__CELSIUS, parsed.get_temperature()
                 )
+
+            # Additional Sensor
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_POWER,
+                name="Output Power",
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=parsed.get_voltage() * parsed.get_current(),
+                device_class=SensorDeviceClass.POWER,
+            )
+            self.update_sensor(
+                key=VictronSensor.CONSUMED_ENERGY,
+                name="Consumed Energy",
+                native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
+                native_value=parsed.get_voltage() * parsed.get_consumed_ah() * -1,
+                device_class=SensorDeviceClass.ENERGY,
+            )
         elif isinstance(parsed, BatterySenseData):
             self.update_predefined_sensor(
                 SensorLibrary.TEMPERATURE__CELSIUS, parsed.get_temperature()
