@@ -106,36 +106,42 @@ class VictronBluetoothDeviceData(BluetoothData):
                 parsed.get_output_voltage1(),
                 None,
                 "Output Voltage 1",
+                "output_voltage_1",
             )
             self.update_predefined_sensor(
                 SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
                 parsed.get_output_voltage2(),
                 None,
                 "Output Voltage 2",
+                "output_voltage_2",
             )
             self.update_predefined_sensor(
                 SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
                 parsed.get_output_voltage3(),
                 None,
                 "Output Voltage 3",
+                "output_voltage_3",
             )
             self.update_predefined_sensor(
                 SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
                 parsed.get_output_current1(),
                 None,
                 "Output Current 1",
+                "output_current_1",
             )
             self.update_predefined_sensor(
                 SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
                 parsed.get_output_current2(),
                 None,
                 "Output Current 2",
+                "output_current_2",
             )
             self.update_predefined_sensor(
                 SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
                 parsed.get_output_current3(),
                 None,
                 "Output Current 3",
+                "output_current_2",
             )
             self.update_predefined_sensor(
                 SensorLibrary.TEMPERATURE__CELSIUS,
@@ -177,6 +183,7 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_unit_of_measurement=None,
                 native_value=parsed.get_alarm_reason().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
+                device_id="alarm_reason_1",
             )
             self.update_sensor(
                 key=VictronSensor.ALARM_REASON,
@@ -184,18 +191,21 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_unit_of_measurement=None,
                 native_value=parsed.get_warning_reason().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
+                device_id="alarm_reason_2",
             )
-            self.update_predefined_sensor(
-                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
-                parsed.get_input_voltage(),
-                None,
-                "Input Voltage",
+            self.update_sensor(
+                key=VictronSensor.INPUT_VOLTAGE,
+                name="Input Voltage",
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_input_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
             )
-            self.update_predefined_sensor(
-                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
-                parsed.get_output_voltage(),
-                None,
-                "Output Voltage",
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_VOLTAGE,
+                name="Output Voltage",
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_output_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
             )
             self.update_sensor(
                 key=VictronSensor.OFF_REASON,
