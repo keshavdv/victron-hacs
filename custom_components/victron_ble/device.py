@@ -25,7 +25,8 @@ class VictronSensor(StrEnum):
     YIELD_TODAY = "yield_today"
     INPUT_VOLTAGE = "input_voltage"
     OUTPUT_VOLTAGE = "output_voltage"
-    OUTPUT_CURRENT = "output_CURRENT"
+    OUTPUT_CURRENT = "output_current"
+    OUTPUT_POWER = "output_power"
     OFF_REASON = "off_reason"
     CHARGER_ERROR = "charger_error"
     STARTER_BATTERY_VOLTAGE = "starter_battery_voltage"
@@ -154,6 +155,16 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_value=parsed.get_ac_current(),
                 name="AC Current",
             )
+
+            # Additional Sensor
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_POWER,
+                name="Output Power 1",
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=parsed.get_output_current1() * parsed.get_output_voltage1(),
+                device_class=SensorDeviceClass.POWER,
+            )
+
 
         elif isinstance(parsed, SmartBatteryProtectData):
             self.update_sensor(

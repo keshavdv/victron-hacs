@@ -131,6 +131,15 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    (
+        VictronSensor.OUTPUT_POWER,
+        Units.POWER_WATT,
+    ): SensorEntityDescription(
+        key=VictronSensor.OUTPUT_POWER,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     (SensorDeviceClass.BATTERY, Units.PERCENTAGE): SensorEntityDescription(
         key=f"{SensorDeviceClass.BATTERY}_{Units.PERCENTAGE}",
         device_class=SensorDeviceClass.BATTERY,
