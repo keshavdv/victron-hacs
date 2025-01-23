@@ -7,6 +7,7 @@ from sensor_state_data import SensorLibrary
 from sensor_state_data.enum import StrEnum
 from sensor_state_data.units import Units
 from victron_ble.devices import detect_device_type
+from victron_ble.devices.ac_charger import AcChargerData
 from victron_ble.devices.battery_monitor import AuxMode, BatteryMonitorData
 from victron_ble.devices.battery_sense import BatterySenseData
 from victron_ble.devices.dc_energy_meter import DcEnergyMeterData
@@ -87,6 +88,68 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_predefined_sensor(
                 SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE, parsed.get_current()
             )
+        elif isinstance(parsed, AcChargerData):
+            self.update_sensor(
+                key=VictronSensor.OPERATION_MODE,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_charge_state().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.CHARGER_ERROR,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_charger_error().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                parsed.get_output_voltage1(),
+                None,
+                "Output Voltage 1",
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                parsed.get_output_voltage2(),
+                None,
+                "Output Voltage 2",
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                parsed.get_output_voltage3(),
+                None,
+                "Output Voltage 3",
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
+                parsed.get_output_current1(),
+                None,
+                "Output Current 1",
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
+                parsed.get_output_current2(),
+                None,
+                "Output Current 2",
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
+                parsed.get_output_current3(),
+                None,
+                "Output Current 3",
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.TEMPERATURE__CELSIUS,
+                parsed.get_temperature(),
+                None,
+                "Temperature",
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
+                parsed.get_ac_current(),
+                None,
+                "AC Current",
+            )
+
         elif isinstance(parsed, SmartBatteryProtectData):
             self.update_sensor(
                 key=VictronSensor.DEVICE_STATE,
@@ -122,19 +185,17 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_value=parsed.get_warning_reason().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
-            self.update_sensor(
-                key=VictronSensor.INPUT_VOLTAGE,
-                name="Input Voltage",
-                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
-                native_value=parsed.get_input_voltage(),
-                device_class=SensorDeviceClass.VOLTAGE,
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                parsed.get_input_voltage(),
+                None,
+                "Input Voltage",
             )
-            self.update_sensor(
-                key=VictronSensor.OUTPUT_VOLTAGE,
-                name="Output Voltage",
-                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
-                native_value=parsed.get_output_voltage(),
-                device_class=SensorDeviceClass.VOLTAGE,
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT,
+                parsed.get_output_voltage(),
+                None,
+                "Output Voltage",
             )
             self.update_sensor(
                 key=VictronSensor.OFF_REASON,
