@@ -90,7 +90,7 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in ChargerError._member_names_],
     ),
-    (VictronSensor.EXTERNAL_DEVICE_LOAD, None): SensorEntityDescription(
+    (VictronSensor.EXTERNAL_DEVICE_LOAD, Units.ELECTRIC_CURRENT_AMPERE): SensorEntityDescription(
         key=VictronSensor.EXTERNAL_DEVICE_LOAD,
         device_class=SensorDeviceClass.CURRENT,
         native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
