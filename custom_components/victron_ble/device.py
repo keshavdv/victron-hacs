@@ -13,6 +13,8 @@ from victron_ble.devices.battery_sense import BatterySenseData
 from victron_ble.devices.dc_energy_meter import DcEnergyMeterData
 from victron_ble.devices.dcdc_converter import DcDcConverterData
 from victron_ble.devices.smart_battery_protect import SmartBatteryProtectData
+from victron_ble.devices.smart_lithium import SmartLithiumData
+from victron_ble.devices.lynx_smart_bms import LynxSmartBMSData
 from victron_ble.devices.solar_charger import SolarChargerData
 
 _LOGGER = logging.getLogger(__name__)
@@ -37,6 +39,25 @@ class VictronSensor(StrEnum):
     WARNING_REASON = "warning_reason"
     DEVICE_STATE = "device_state"
     OUTPUT_STATE = "output_state"
+    CELL_VOLTAGE_1 = "cell_voltage_1"
+    CELL_VOLTAGE_2 = "cell_voltage_2"
+    CELL_VOLTAGE_3 = "cell_voltage_3"
+    CELL_VOLTAGE_4 = "cell_voltage_4"
+    CELL_VOLTAGE_5 = "cell_voltage_5"
+    CELL_VOLTAGE_6 = "cell_voltage_6"
+    CELL_VOLTAGE_7 = "cell_voltage_7"
+    CELL_VOLTAGE_8 = "cell_voltage_8"
+    CELL_VOLTAGE_9 = "cell_voltage_9"
+    CELL_VOLTAGE_10 = "cell_voltage_10"
+    CELL_VOLTAGE_11 = "cell_voltage_11"
+    CELL_VOLTAGE_12 = "cell_voltage_12"
+    CELL_VOLTAGE_13 = "cell_voltage_13"
+    CELL_VOLTAGE_14 = "cell_voltage_14"
+    CELL_VOLTAGE_15 = "cell_voltage_15"
+    CELL_VOLTAGE_16 = "cell_voltage_16"
+    BALANCER_STATUS = "balancer_status"
+    REMAINING_MINS = "remaining_mins"
+    CONSUMED_AH = "consumed_ah"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
@@ -162,10 +183,10 @@ class VictronBluetoothDeviceData(BluetoothData):
                 key=VictronSensor.OUTPUT_POWER,
                 name="Output Power 1",
                 native_unit_of_measurement=Units.POWER_WATT,
-                native_value=parsed.get_output_current1() * parsed.get_output_voltage1(),
+                native_value=parsed.get_output_current1()
+                * parsed.get_output_voltage1(),
                 device_class=SensorDeviceClass.POWER,
             )
-
 
         elif isinstance(parsed, SmartBatteryProtectData):
             self.update_sensor(
@@ -365,5 +386,109 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_value=parsed.get_charger_error().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
+        elif isinstance(parsed, SmartLithiumData):
+            voltage = parsed.get_battery_voltage()
+            if voltage is not None:
+                self.update_sensor(
+                    key="voltage",
+                    name="Voltage",
+                    native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                    native_value=voltage,
+                    device_class=SensorDeviceClass.VOLTAGE,
+                )
+                self.set_precision(2)
+
+            self.update_predefined_sensor(
+                SensorLibrary.TEMPERATURE__CELSIUS,
+                parsed.get_battery_temperature(),
+            )
+
+            # Individual cell voltages
+            cell_voltages = parsed.get_cell_voltages()
+            cell_voltage_keys = [
+                VictronSensor.CELL_VOLTAGE_1,
+                VictronSensor.CELL_VOLTAGE_2,
+                VictronSensor.CELL_VOLTAGE_3,
+                VictronSensor.CELL_VOLTAGE_4,
+                VictronSensor.CELL_VOLTAGE_5,
+                VictronSensor.CELL_VOLTAGE_6,
+                VictronSensor.CELL_VOLTAGE_7,
+                VictronSensor.CELL_VOLTAGE_8,
+                VictronSensor.CELL_VOLTAGE_9,
+                VictronSensor.CELL_VOLTAGE_10,
+                VictronSensor.CELL_VOLTAGE_11,
+                VictronSensor.CELL_VOLTAGE_12,
+                VictronSensor.CELL_VOLTAGE_13,
+                VictronSensor.CELL_VOLTAGE_14,
+                VictronSensor.CELL_VOLTAGE_15,
+                VictronSensor.CELL_VOLTAGE_16,
+            ]
+
+            for i, (key, voltage) in enumerate(zip(cell_voltage_keys, cell_voltages)):
+                if voltage is not None and not (
+                    isinstance(voltage, float)
+                    and (voltage == float("inf") or voltage == float("-inf"))
+                ):
+                    self.update_sensor(
+                        key=key,
+                        name=f"Cell {i + 1} Voltage",
+                        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                        native_value=voltage,
+                        device_class=SensorDeviceClass.VOLTAGE,
+                    )
+
+            balancer_status = parsed.get_balancer_status()
+            if balancer_status:
+                self.update_sensor(
+                    key=VictronSensor.BALANCER_STATUS,
+                    native_unit_of_measurement=None,
+                    native_value=balancer_status.name.lower(),
+                    device_class=SensorDeviceClass.ENUM,
+                )
+        elif isinstance(parsed, LynxSmartBMSData):
+            self.set_precision(2)
+
+            voltage = parsed.get_voltage()
+            if voltage is not None:
+                self.update_sensor(
+                    key="voltage",
+                    name="Voltage",
+                    native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                    native_value=voltage,
+                    device_class=SensorDeviceClass.VOLTAGE,
+                )
+
+            self.update_predefined_sensor(
+                SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE,
+                parsed.get_current(),
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.BATTERY__PERCENTAGE,
+                parsed.get_soc(),
+            )
+
+            self.update_sensor(
+                key=VictronSensor.REMAINING_MINS,
+                native_unit_of_measurement=Units.TIME_MINUTES,
+                native_value=parsed.get_remaining_mins(),
+                device_class=SensorDeviceClass.DURATION,
+            )
+            self.update_sensor(
+                key=VictronSensor.CONSUMED_AH,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_consumed_ah(),
+                device_class=None,
+            )
+
+            # Additional Sensor
+            current = parsed.get_current()
+            if voltage is not None and current is not None:
+                self.update_sensor(
+                    key=VictronSensor.OUTPUT_POWER,
+                    name="Power",
+                    native_unit_of_measurement=Units.POWER_WATT,
+                    native_value=voltage * current,
+                    device_class=SensorDeviceClass.POWER,
+                )
 
         return

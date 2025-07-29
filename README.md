@@ -45,6 +45,18 @@ Supported Devices & Entities:
   - Operation Mode
   - Temperature (°C)
   - AC Current
+- SmartLithium
+  - Battery Voltage
+  - Battery Temperature (°C)
+  - Cell Voltages (1-16)
+  - Balancer Status
+- Lynx Smart BMS
+  - Voltage
+  - Current
+  - State of charge (%)
+  - Remaining time (mins)
+  - Consumed amp hours
+  - Power
 
 # Installation
 
