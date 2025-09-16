@@ -48,6 +48,7 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
     ),
     (SensorDeviceClass.CURRENT, Units.ELECTRIC_CURRENT_AMPERE): SensorEntityDescription(
         key=f"{SensorDeviceClass.CURRENT}_{Units.ELECTRIC_CURRENT_AMPERE}",
@@ -119,6 +120,7 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
     ),
     (
         VictronSensor.OUTPUT_VOLTAGE,
@@ -128,6 +130,7 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
     ),
     (
         VictronSensor.OUTPUT_CURRENT,
@@ -171,6 +174,7 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
     ),
     (
         VictronSensor.MIDPOINT_VOLTAGE,
@@ -180,6 +184,7 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=2,
     ),
     (VictronSensor.CONSUMED_ENERGY, Units.ENERGY_WATT_HOUR): SensorEntityDescription(
         key=VictronSensor.CONSUMED_ENERGY,
