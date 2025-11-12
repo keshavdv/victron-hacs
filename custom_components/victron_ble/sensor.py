@@ -93,6 +93,12 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
+    (VictronSensor.YIELD_TODAY, Units.ENERGY_KILO_WATT_HOUR): SensorEntityDescription(
+        key=VictronSensor.YIELD_TODAY,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=Units.ENERGY_KILO_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
     (SensorDeviceClass.POWER, Units.POWER_WATT): SensorEntityDescription(
         key=f"{SensorDeviceClass.POWER}_{Units.POWER_WATT}",
         device_class=SensorDeviceClass.POWER,
@@ -118,6 +124,11 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         key=VictronSensor.CHARGER_ERROR,
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in ChargerError._member_names_],
+    ),
+    (VictronSensor.ACTIVE_AC_IN, None): SensorEntityDescription(
+        key=VictronSensor.ACTIVE_AC_IN,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in ACInState._member_names_ if x != "UNKNOWN"],
     ),
     (VictronSensor.EXTERNAL_DEVICE_LOAD, None): SensorEntityDescription(
         key=VictronSensor.EXTERNAL_DEVICE_LOAD,
