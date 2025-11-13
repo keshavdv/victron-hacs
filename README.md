@@ -17,6 +17,15 @@ Supported Devices & Entities:
 - Smart Battery Sense
   - Voltage
   - Temperature (°C)
+- Smart Battery Protect
+  - Input Voltage
+  - Output Voltage
+  - Output State
+  - Device State
+  - Charger Error
+  - Alarm Reason
+  - Warning Reason
+  - Off Reason
 - MPPT/Solar Charger
   - Charger State (Off, Bulk, Absorption, Float)
   - Battery Voltage (V)
@@ -24,6 +33,18 @@ Supported Devices & Entities:
   - Solar Power (W)
   - Yield Today (Wh)
   - External Device Load (A)
+- DC/DC Charger
+  - Input Voltage
+  - Output Voltage
+  - Operation Mode
+  - Charger Error
+  - Off Reason
+- AC Charger
+  - Output Voltage 1|2|3
+  - Output Current 1|2|3
+  - Operation Mode
+  - Temperature (°C)
+  - AC Current
 
 # Installation
 
