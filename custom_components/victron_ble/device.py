@@ -62,6 +62,16 @@ class VictronSensor(StrEnum):
     BALANCER_STATUS = "balancer_status"
     REMAINING_MINS = "remaining_mins"
     CONSUMED_AH = "consumed_ah"
+    BATTERY_VOLTAGE = "battery_voltage"
+    BATTERY_CURRENT = "battery_current"
+    BATTERY_TEMPERATURE = "battery_temperature"
+    AC_VOLTAGE = "ac_voltage"
+    AC_CURRENT = "ac_current"
+    AC_APPARENT_POWER = "ac_apparent_power"
+    AC_INPUT_STATE = "ac_input_state"
+    AC_INPUT_POWER = "ac_input_power"
+    AC_OUTPUT_POWER = "ac_output_power"
+    ALARM_NOTIFICATION = "alarm_notification"
 
 
 class VictronBluetoothDeviceData(BluetoothData):
