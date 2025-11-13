@@ -33,6 +33,7 @@ class VictronSensor(StrEnum):
     MIDPOINT_VOLTAGE = "midpoint_voltage"
     TIME_REMAINING = "time_remaining"
     CONSUMED_ENERGY = "consumed_energy"
+    CONSUMED_AH = "consumed_ah"
     ALARM_REASON = "alarm_reason"
     WARNING_REASON = "warning_reason"
     DEVICE_STATE = "device_state"
@@ -246,6 +247,13 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_unit_of_measurement=Units.TIME_MINUTES,
                 native_value=parsed.get_remaining_mins(),
                 device_class=SensorDeviceClass.DURATION,
+            )
+            self.update_sensor(
+                key=VictronSensor.CONSUMED_AH,
+                name="Consumed Ah",
+                native_unit_of_measurement="Ah",
+                native_value=parsed.get_consumed_ah(),
+                device_class=SensorDeviceClass.ENERGY_STORAGE,
             )
 
             aux_mode = parsed.get_aux_mode()
