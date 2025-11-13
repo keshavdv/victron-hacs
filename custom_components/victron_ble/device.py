@@ -8,6 +8,7 @@ from sensor_state_data.enum import StrEnum
 from sensor_state_data.units import Units
 from victron_ble.devices import detect_device_type
 from victron_ble.devices.ac_charger import AcChargerData
+from victron_ble.devices.inverter import InverterData
 from victron_ble.devices.battery_monitor import AuxMode, BatteryMonitorData
 from victron_ble.devices.battery_sense import BatterySenseData
 from victron_ble.devices.dc_energy_meter import DcEnergyMeterData
@@ -167,6 +168,45 @@ class VictronBluetoothDeviceData(BluetoothData):
                 device_class=SensorDeviceClass.POWER,
             )
 
+        elif isinstance(parsed, InverterData):
+            self.update_sensor(
+                key=VictronSensor.OPERATION_MODE,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_device_state().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+            )
+            self.update_sensor(
+                key=VictronSensor.INPUT_VOLTAGE,
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_battery_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
+            )
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_VOLTAGE,
+                native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+                native_value=parsed.get_ac_voltage(),
+                device_class=SensorDeviceClass.VOLTAGE,
+            )
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_CURRENT,
+                native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+                native_value=parsed.get_ac_current(),
+                device_class=SensorDeviceClass.CURRENT,
+            )
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_POWER,
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=parsed.get_ac_apparent_power(),
+                device_class=SensorDeviceClass.POWER,
+            )
+            alarm = parsed.get_alarm()
+            alarm_name = alarm.name.lower() if alarm else None
+            self.update_sensor(
+                key=VictronSensor.ALARM_REASON,
+                native_unit_of_measurement=None,
+                native_value=alarm_name,
+                device_class=SensorDeviceClass.ENUM,
+            )
 
         elif isinstance(parsed, SmartBatteryProtectData):
             self.update_sensor(
