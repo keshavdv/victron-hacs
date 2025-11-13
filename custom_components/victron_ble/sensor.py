@@ -25,7 +25,14 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
 from sensor_state_data.data import SensorUpdate
 from sensor_state_data.units import Units
-from victron_ble.devices.base import AlarmReason, ChargerError, OffReason, OperationMode
+from victron_ble.devices.base import (
+    ACInState,
+    AlarmNotification,
+    AlarmReason,
+    ChargerError,
+    OffReason,
+    OperationMode,
+)
 from victron_ble.devices.battery_monitor import AuxMode
 from victron_ble.devices.smart_battery_protect import OutputState
 from victron_ble.devices.smart_lithium import BalancerStatus
@@ -60,6 +67,24 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         key=f"{SensorDeviceClass.BATTERY}_{Units.PERCENTAGE}",
         device_class=SensorDeviceClass.BATTERY,
         native_unit_of_measurement=Units.PERCENTAGE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.INPUT_CURRENT,
+        Units.ELECTRIC_CURRENT_AMPERE,
+    ): SensorEntityDescription(
+        key=VictronSensor.INPUT_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.OUTPUT_CURRENT,
+        Units.ELECTRIC_CURRENT_AMPERE,
+    ): SensorEntityDescription(
+        key=VictronSensor.OUTPUT_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
     (VictronSensor.YIELD_TODAY, Units.ENERGY_WATT_HOUR): SensorEntityDescription(
@@ -100,7 +125,10 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    (VictronSensor.EXTERNAL_DEVICE_LOAD, Units.ELECTRIC_CURRENT_AMPERE): SensorEntityDescription(
+    (
+        VictronSensor.EXTERNAL_DEVICE_LOAD,
+        Units.ELECTRIC_CURRENT_AMPERE,
+    ): SensorEntityDescription(
         key=VictronSensor.EXTERNAL_DEVICE_LOAD,
         device_class=SensorDeviceClass.CURRENT,
         native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
@@ -186,6 +214,65 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
+    (
+        VictronSensor.BATTERY_VOLTAGE,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
+        key=VictronSensor.BATTERY_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.BATTERY_CURRENT,
+        Units.ELECTRIC_CURRENT_AMPERE,
+    ): SensorEntityDescription(
+        key=VictronSensor.BATTERY_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.BATTERY_TEMPERATURE, Units.TEMP_CELSIUS): SensorEntityDescription(
+        key=VictronSensor.BATTERY_TEMPERATURE,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        native_unit_of_measurement=Units.TEMP_CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_VOLTAGE, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+        key=VictronSensor.AC_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_CURRENT, Units.ELECTRIC_CURRENT_AMPERE): SensorEntityDescription(
+        key=VictronSensor.AC_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_APPARENT_POWER, Units.POWER_VOLT_AMPERE): SensorEntityDescription(
+        key=VictronSensor.AC_CURRENT,
+        device_class=SensorDeviceClass.APPARENT_POWER,
+        native_unit_of_measurement=Units.POWER_VOLT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_INPUT_STATE, None): SensorEntityDescription(
+        key=VictronSensor.AC_INPUT_STATE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in ACInState._member_names_],
+    ),
+    (VictronSensor.AC_INPUT_POWER, Units.POWER_WATT): SensorEntityDescription(
+        key=VictronSensor.AC_INPUT_POWER,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.AC_OUTPUT_POWER, Units.POWER_WATT): SensorEntityDescription(
+        key=VictronSensor.AC_OUTPUT_POWER,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     (VictronSensor.CONSUMED_ENERGY, Units.ENERGY_WATT_HOUR): SensorEntityDescription(
         key=VictronSensor.CONSUMED_ENERGY,
         device_class=SensorDeviceClass.ENERGY,
@@ -203,6 +290,11 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in AlarmReason._member_names_],
     ),
+    (VictronSensor.ALARM_NOTIFICATION, None): SensorEntityDescription(
+        key=VictronSensor.ALARM_NOTIFICATION,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in AlarmNotification._member_names_],
+    ),
     (VictronSensor.WARNING_REASON, None): SensorEntityDescription(
         key=VictronSensor.WARNING_REASON,
         device_class=SensorDeviceClass.ENUM,
@@ -218,112 +310,160 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in OutputState._member_names_],
     ),
-    (VictronSensor.CELL_VOLTAGE_1, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_1,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_1,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_2, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_2,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_2,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_3, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_3,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_3,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_4, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_4,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_4,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_5, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_5,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_5,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_6, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_6,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_6,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_7, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_7,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_7,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_8, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_8,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_8,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_9, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_9,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_9,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_10, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_10,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_10,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_11, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_11,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_11,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_12, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_12,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_12,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_13, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_13,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_13,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_14, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_14,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_14,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_15, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_15,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_15,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=2,
     ),
-    (VictronSensor.CELL_VOLTAGE_16, Units.ELECTRIC_POTENTIAL_VOLT): SensorEntityDescription(
+    (
+        VictronSensor.CELL_VOLTAGE_16,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
         key=VictronSensor.CELL_VOLTAGE_16,
         device_class=SensorDeviceClass.VOLTAGE,
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
@@ -380,8 +520,6 @@ def sensor_update_to_bluetooth_data_update(
             for device_key, sensor_values in sensor_update.entity_values.items()
         },
     )
-    _LOGGER.debug(f"IN 2here: {data}")
-
     return data
 
 

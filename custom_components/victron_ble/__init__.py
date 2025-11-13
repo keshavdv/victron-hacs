@@ -1,4 +1,5 @@
 """The victron_ble integration."""
+
 from __future__ import annotations
 
 import logging
@@ -24,14 +25,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     address = entry.unique_id
     assert address is not None
     data = VictronBluetoothDeviceData(entry.data["key"])
-    coordinator = hass.data.setdefault(DOMAIN, {})[
-        entry.entry_id
-    ] = PassiveBluetoothProcessorCoordinator(
-        hass,
-        _LOGGER,
-        address=address,
-        mode=BluetoothScanningMode.ACTIVE,
-        update_method=data.update,
+    coordinator = hass.data.setdefault(DOMAIN, {})[entry.entry_id] = (
+        PassiveBluetoothProcessorCoordinator(
+            hass,
+            _LOGGER,
+            address=address,
+            mode=BluetoothScanningMode.ACTIVE,
+            update_method=data.update,
+        )
     )
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(
