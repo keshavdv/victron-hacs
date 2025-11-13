@@ -1,4 +1,5 @@
 """Support for Victron ble sensors."""
+
 from __future__ import annotations
 
 import logging
@@ -24,8 +25,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.sensor import sensor_device_info_to_hass_device_info
 from sensor_state_data.data import SensorUpdate
 from sensor_state_data.units import Units
-from victron_ble.devices.base import ChargerError, OffReason, OperationMode
+from victron_ble.devices.base import AlarmReason, ChargerError, OffReason, OperationMode
 from victron_ble.devices.battery_monitor import AuxMode
+from victron_ble.devices.smart_battery_protect import OutputState
 
 from .const import DOMAIN
 from .device import VictronSensor
@@ -96,6 +98,12 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    (VictronSensor.EXTERNAL_DEVICE_LOAD, Units.ELECTRIC_CURRENT_AMPERE): SensorEntityDescription(
+        key=VictronSensor.EXTERNAL_DEVICE_LOAD,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     (VictronSensor.TIME_REMAINING, Units.TIME_MINUTES): SensorEntityDescription(
         key=VictronSensor.TIME_REMAINING,
         device_class=SensorDeviceClass.DURATION,
@@ -120,6 +128,24 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
         state_class=SensorStateClass.MEASUREMENT,
     ),
+    (
+        VictronSensor.OUTPUT_CURRENT,
+        Units.ELECTRIC_CURRENT_AMPERE,
+    ): SensorEntityDescription(
+        key=VictronSensor.OUTPUT_CURRENT,
+        device_class=SensorDeviceClass.CURRENT,
+        native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.OUTPUT_POWER,
+        Units.POWER_WATT,
+    ): SensorEntityDescription(
+        key=VictronSensor.OUTPUT_POWER,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
     (SensorDeviceClass.BATTERY, Units.PERCENTAGE): SensorEntityDescription(
         key=f"{SensorDeviceClass.BATTERY}_{Units.PERCENTAGE}",
         device_class=SensorDeviceClass.BATTERY,
@@ -135,6 +161,50 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         state_class=SensorStateClass.MEASUREMENT,
         entity_registry_enabled_default=False,
+    ),
+    (
+        VictronSensor.STARTER_BATTERY_VOLTAGE,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
+        key=VictronSensor.STARTER_BATTERY_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.MIDPOINT_VOLTAGE,
+        Units.ELECTRIC_POTENTIAL_VOLT,
+    ): SensorEntityDescription(
+        key=VictronSensor.MIDPOINT_VOLTAGE,
+        device_class=SensorDeviceClass.VOLTAGE,
+        native_unit_of_measurement=Units.ELECTRIC_POTENTIAL_VOLT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (VictronSensor.CONSUMED_ENERGY, Units.ENERGY_WATT_HOUR): SensorEntityDescription(
+        key=VictronSensor.CONSUMED_ENERGY,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
+    (VictronSensor.ALARM_REASON, None): SensorEntityDescription(
+        key=VictronSensor.ALARM_REASON,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in AlarmReason._member_names_],
+    ),
+    (VictronSensor.WARNING_REASON, None): SensorEntityDescription(
+        key=VictronSensor.WARNING_REASON,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in AlarmReason._member_names_],
+    ),
+    (VictronSensor.DEVICE_STATE, None): SensorEntityDescription(
+        key=VictronSensor.DEVICE_STATE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OperationMode._member_names_],
+    ),
+    (VictronSensor.OUTPUT_STATE, None): SensorEntityDescription(
+        key=VictronSensor.OUTPUT_STATE,
+        device_class=SensorDeviceClass.ENUM,
+        options=[x.lower() for x in OutputState._member_names_],
     ),
 }
 
@@ -184,7 +254,14 @@ async def async_setup_entry(
     coordinator: PassiveBluetoothProcessorCoordinator = hass.data[DOMAIN][
         entry.entry_id
     ]
-    processor = PassiveBluetoothDataProcessor(sensor_update_to_bluetooth_data_update)
+
+    def update_method(sensor_update: SensorUpdate) -> PassiveBluetoothDataUpdate:
+        return sensor_update_to_bluetooth_data_update(sensor_update)
+
+    processor = PassiveBluetoothDataProcessor(
+        update_method=update_method, restore_key=entry.entry_id
+    )
+
     entry.async_on_unload(
         processor.async_add_entities_listener(
             VictronBluetoothSensorEntity, async_add_entities
@@ -195,7 +272,7 @@ async def async_setup_entry(
 
 class VictronBluetoothSensorEntity(
     PassiveBluetoothProcessorEntity[
-        PassiveBluetoothDataProcessor[Optional[Union[float, int]]]
+        PassiveBluetoothDataProcessor[Optional[Union[float, int]], SensorUpdate]
     ],
     SensorEntity,
 ):
