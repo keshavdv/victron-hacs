@@ -30,6 +30,7 @@ class VictronSensor(StrEnum):
     YIELD_TODAY = "yield_today"
     INPUT_VOLTAGE = "input_voltage"
     OUTPUT_VOLTAGE = "output_voltage"
+    INPUT_CURRENT = "input_current"
     OUTPUT_CURRENT = "output_current"
     OUTPUT_POWER = "output_power"
     OFF_REASON = "off_reason"
