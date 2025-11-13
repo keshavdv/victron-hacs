@@ -1,6 +1,6 @@
 -r requirements_dev.txt
 pytest-homeassistant
-pytest-homeassistant-custom-component==0.13.32
+pytest-homeassistant-custom-component==0.13.295
 victron_ble==0.5.1
 bleak_retry_connector
 serial
