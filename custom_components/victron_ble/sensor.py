@@ -125,11 +125,6 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in ChargerError._member_names_],
     ),
-    (VictronSensor.ACTIVE_AC_IN, None): SensorEntityDescription(
-        key=VictronSensor.ACTIVE_AC_IN,
-        device_class=SensorDeviceClass.ENUM,
-        options=[x.lower() for x in ACInState._member_names_ if x != "UNKNOWN"],
-    ),
     (VictronSensor.EXTERNAL_DEVICE_LOAD, None): SensorEntityDescription(
         key=VictronSensor.EXTERNAL_DEVICE_LOAD,
         device_class=SensorDeviceClass.CURRENT,

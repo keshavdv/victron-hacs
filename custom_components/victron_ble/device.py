@@ -25,7 +25,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class VictronSensor(StrEnum):
-    ACTIVE_AC_IN = "active_ac_in"
     AUX_MODE = "aux_mode"
     OPERATION_MODE = "operation_mode"
     EXTERNAL_DEVICE_LOAD = "external_device_load"
@@ -532,7 +531,7 @@ class VictronBluetoothDeviceData(BluetoothData):
                 name="Charger Error"
             )
             self.update_sensor(
-                key=VictronSensor.ACTIVE_AC_IN,
+                key=VictronSensor.AC_INPUT_STATE,
                 native_unit_of_measurement=None,
                 native_value=parsed.get_active_ac_in().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
