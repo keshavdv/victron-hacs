@@ -93,6 +93,12 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         native_unit_of_measurement=Units.ENERGY_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
     ),
+    (VictronSensor.YIELD_TODAY, Units.ENERGY_KILO_WATT_HOUR): SensorEntityDescription(
+        key=VictronSensor.YIELD_TODAY,
+        device_class=SensorDeviceClass.ENERGY,
+        native_unit_of_measurement=Units.ENERGY_KILO_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+    ),
     (SensorDeviceClass.POWER, Units.POWER_WATT): SensorEntityDescription(
         key=f"{SensorDeviceClass.POWER}_{Units.POWER_WATT}",
         device_class=SensorDeviceClass.POWER,

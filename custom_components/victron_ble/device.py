@@ -14,6 +14,7 @@ from victron_ble.devices.dc_energy_meter import DcEnergyMeterData
 from victron_ble.devices.dcdc_converter import DcDcConverterData
 from victron_ble.devices.inverter import InverterData
 from victron_ble.devices.lynx_smart_bms import LynxSmartBMSData
+from victron_ble.devices.multirs import MultiRSData
 from victron_ble.devices.orion_xs import OrionXSData
 from victron_ble.devices.smart_battery_protect import SmartBatteryProtectData
 from victron_ble.devices.smart_lithium import SmartLithiumData
@@ -484,6 +485,58 @@ class VictronBluetoothDeviceData(BluetoothData):
                     native_value=parsed.get_external_device_load(),
                     device_class=SensorDeviceClass.CURRENT,
                 )
+        elif isinstance(parsed, MultiRSData):
+            self.update_predefined_sensor(
+                SensorLibrary.VOLTAGE__ELECTRIC_POTENTIAL_VOLT, parsed.get_battery_voltage(), name="Battery Voltage"
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.CURRENT__ELECTRIC_CURRENT_AMPERE, parsed.get_battery_current(), name="Battery Current"
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_INPUT_POWER,
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=parsed.get_active_ac_in_power(),
+                device_class=SensorDeviceClass.POWER,
+                name="AC In Power"
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_OUTPUT_POWER,
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=parsed.get_active_ac_out_power(),
+                device_class=SensorDeviceClass.POWER,
+                name="AC Out Power"
+            )
+            self.update_predefined_sensor(
+                SensorLibrary.POWER__POWER_WATT, parsed.get_pv_power(), name="PV Power"
+            )
+            self.update_sensor(
+                key=VictronSensor.YIELD_TODAY,
+                native_unit_of_measurement=Units.ENERGY_KILO_WATT_HOUR,
+                native_value=parsed.get_yield_today(),
+                device_class=SensorDeviceClass.ENERGY,
+                name="Yield Today"
+            )
+            self.update_sensor(
+                key=VictronSensor.DEVICE_STATE,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_device_state().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+                name="Device State"
+            )
+            self.update_sensor(
+                key=VictronSensor.CHARGER_ERROR,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_charger_error().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+                name="Charger Error"
+            )
+            self.update_sensor(
+                key=VictronSensor.AC_INPUT_STATE,
+                native_unit_of_measurement=None,
+                native_value=parsed.get_active_ac_in().name.lower(),
+                device_class=SensorDeviceClass.ENUM,
+                name="Active AC In"
+            )
         elif isinstance(parsed, DcDcConverterData):
             self.update_sensor(
                 key=VictronSensor.OPERATION_MODE,
