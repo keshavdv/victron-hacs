@@ -218,7 +218,7 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OPERATION_MODE,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_charge_state().lower(),
+                native_value=parsed.get_charge_state().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
@@ -248,13 +248,13 @@ class VictronBluetoothDeviceData(BluetoothData):
             self.update_sensor(
                 key=VictronSensor.OFF_REASON,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_off_reason().lower(),
+                native_value=parsed.get_off_reason().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
             self.update_sensor(
                 key=VictronSensor.CHARGER_ERROR,
                 native_unit_of_measurement=None,
-                native_value=parsed.get_charger_error().lower(),
+                native_value=parsed.get_charger_error().name.lower(),
                 device_class=SensorDeviceClass.ENUM,
             )
         elif isinstance(parsed, VEBusData):
