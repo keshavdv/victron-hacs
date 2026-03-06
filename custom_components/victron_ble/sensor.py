@@ -39,6 +39,7 @@ from victron_ble.devices.smart_lithium import BalancerStatus
 
 from .const import DOMAIN
 from .device import VictronSensor
+from .profiles.inverter.sensor import async_setup_entry as async_setup_inverter_sensor_entry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -552,6 +553,9 @@ async def async_setup_entry(
         )
     )
     entry.async_on_unload(coordinator.async_register_processor(processor))
+
+    # Additional inverter-specific diagnostic sensors
+    await async_setup_inverter_sensor_entry(hass, entry, async_add_entities)
 
 
 class VictronBluetoothSensorEntity(

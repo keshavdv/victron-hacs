@@ -9,6 +9,8 @@ from homeassistant import config_entries
 from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
+from victron_ble.devices import detect_device_type
+from victron_ble.devices.inverter import Inverter
 
 from .const import DOMAIN
 
@@ -32,13 +34,38 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
     ) -> FlowResult:
         """Handle a flow initialized by bluetooth discovery."""
         _LOGGER.debug(discovery_info)
+
+        is_inverter = self._discovery_is_inverter(discovery_info)
+
         self.context["discovery_info"] = {
             "name": discovery_info.name,
             "address": discovery_info.address,
+            "is_inverter": is_inverter,
         }
+
         await self.async_set_unique_id(discovery_info.address)
         self._abort_if_unique_id_configured()
         return await self.async_step_user()
+
+    def _discovery_is_inverter(
+        self, discovery_info: BluetoothServiceInfoBleak
+    ) -> bool:
+        """Return True when discovered payload parses as InverterData."""
+
+        manufacturer_data = discovery_info.manufacturer_data or {}
+
+        for mfr_id, mfr_data in manufacturer_data.items():
+            if mfr_id != 0x02E1 or not mfr_data.startswith(b"\x10"):
+                continue
+
+            parser = detect_device_type(mfr_data)
+            if not parser:
+                continue
+
+            if parser is Inverter:
+                return True
+
+        return False
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -66,7 +93,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call
 
         await self.async_set_unique_id(user_input["address"])
         self._abort_if_unique_id_configured()
-        return self.async_create_entry(title=user_input["name"], data=user_input)
+
+        entry_data = dict(user_input)
+        discovery_info = self.context.get("discovery_info", {})
+        entry_data["is_inverter"] = discovery_info.get("is_inverter", False)
+
+        return self.async_create_entry(title=user_input["name"], data=entry_data)
 
     async def async_step_unignore(self, user_input):
         unique_id = user_input["unique_id"]
