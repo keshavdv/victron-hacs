@@ -18,5 +18,27 @@
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     },
     "entity": {}
+  },
+  "entity": {
+    "sensor": {
+      "off_reason": {
+        "state": {
+          "no_reason": "None",
+          "no_input_power": "No input power",
+          "switched_off_switch": "Power switch",
+          "switched_off_register": "Device mode",
+          "remote_input": "Remote input",
+          "protection_active": "Protection active",
+          "load_output_disabled": "Load output disabled",
+          "pay_as_you_go_out_of_credit": "Out of credit",
+          "bms": "BMS",
+          "engine_shutdown": "Engine off",
+          "engine_shutdown_and_remote_input": "Engine off, remote",
+          "engine_shutdown_and_no_input_power": "Engine off, no input",
+          "engine_shutdown_remote_input_and_no_input_power": "Engine off, remote, no input",
+          "analysing_input_voltage": "Analysing input"
+        }
+      }
+    }
   }
 }

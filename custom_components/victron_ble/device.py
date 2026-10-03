@@ -34,6 +34,7 @@ class VictronSensor(StrEnum):
     INPUT_CURRENT = "input_current"
     OUTPUT_CURRENT = "output_current"
     OUTPUT_POWER = "output_power"
+    INPUT_POWER = "input_power"
     OFF_REASON = "off_reason"
     CHARGER_ERROR = "charger_error"
     STARTER_BATTERY_VOLTAGE = "starter_battery_voltage"
@@ -245,6 +246,32 @@ class VictronBluetoothDeviceData(BluetoothData):
                 native_unit_of_measurement=Units.ELECTRIC_CURRENT_AMPERE,
                 native_value=parsed.get_output_current(),
                 device_class=SensorDeviceClass.CURRENT,
+            )
+            input_voltage = parsed.get_input_voltage()
+            input_current = parsed.get_input_current()
+            self.update_sensor(
+                key=VictronSensor.INPUT_POWER,
+                name="Input Power",
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=(
+                    round(input_voltage * input_current, 1)
+                    if input_voltage is not None and input_current is not None
+                    else None
+                ),
+                device_class=SensorDeviceClass.POWER,
+            )
+            output_voltage = parsed.get_output_voltage()
+            output_current = parsed.get_output_current()
+            self.update_sensor(
+                key=VictronSensor.OUTPUT_POWER,
+                name="Output Power",
+                native_unit_of_measurement=Units.POWER_WATT,
+                native_value=(
+                    round(output_voltage * output_current, 1)
+                    if output_voltage is not None and output_current is not None
+                    else None
+                ),
+                device_class=SensorDeviceClass.POWER,
             )
             self.update_sensor(
                 key=VictronSensor.OFF_REASON,

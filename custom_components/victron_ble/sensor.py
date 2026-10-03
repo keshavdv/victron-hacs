@@ -119,6 +119,7 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         key=VictronSensor.OFF_REASON,
         device_class=SensorDeviceClass.ENUM,
         options=[x.lower() for x in OffReason._member_names_],
+        translation_key="off_reason",
     ),
     (VictronSensor.CHARGER_ERROR, None): SensorEntityDescription(
         key=VictronSensor.CHARGER_ERROR,
@@ -180,6 +181,15 @@ SENSOR_DESCRIPTIONS: Dict[Tuple[SensorDeviceClass, Optional[Units]], Any] = {
         Units.POWER_WATT,
     ): SensorEntityDescription(
         key=VictronSensor.OUTPUT_POWER,
+        device_class=SensorDeviceClass.POWER,
+        native_unit_of_measurement=Units.POWER_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+    ),
+    (
+        VictronSensor.INPUT_POWER,
+        Units.POWER_WATT,
+    ): SensorEntityDescription(
+        key=VictronSensor.INPUT_POWER,
         device_class=SensorDeviceClass.POWER,
         native_unit_of_measurement=Units.POWER_WATT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -566,3 +576,10 @@ class VictronBluetoothSensorEntity(
     def native_value(self) -> int | float | None:
         """Return the native value."""
         return self.processor.entity_data.get(self.entity_key)
+
+    @property
+    def available(self) -> bool:
+        """Show calculated power as unavailable, not unknown, when a reading is missing."""
+        if self.entity_key.key in (VictronSensor.INPUT_POWER, VictronSensor.OUTPUT_POWER):
+            return super().available and self.native_value is not None
+        return super().available
